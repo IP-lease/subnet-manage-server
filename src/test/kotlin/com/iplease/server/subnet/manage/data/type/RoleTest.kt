@@ -1,4 +1,4 @@
-package com.iplease.server.subnet.manage.type
+package com.iplease.server.subnet.manage.data.type
 
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

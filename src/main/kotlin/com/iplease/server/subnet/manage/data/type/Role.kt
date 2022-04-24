@@ -1,4 +1,4 @@
-package com.iplease.server.subnet.manage.type
+package com.iplease.server.subnet.manage.data.type
 
 enum class Role(
     vararg roles: Permission //해당 역할이 가진 권한 목록

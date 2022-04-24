@@ -1,18 +1,20 @@
 package com.iplease.server.subnet.manage.controller
 
-import com.iplease.server.subnet.manage.entity.LoginAccount
-import com.iplease.server.subnet.manage.entity.Subnet
+import com.iplease.server.subnet.manage.data.entity.LoginAccount
+import com.iplease.server.subnet.manage.data.entity.Subnet
+import com.iplease.server.subnet.manage.data.entity.SubnetInfo
 import com.iplease.server.subnet.manage.exception.MalformedSubnetException
 import com.iplease.server.subnet.manage.exception.PermissionDeniedException
 import com.iplease.server.subnet.manage.service.LoginAccountService
 import com.iplease.server.subnet.manage.service.SubnetManageService
-import com.iplease.server.subnet.manage.type.Permission
-import com.iplease.server.subnet.manage.type.Role
+import com.iplease.server.subnet.manage.data.type.Permission
+import com.iplease.server.subnet.manage.data.type.Role
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.*
+import reactor.kotlin.core.publisher.toMono
 import java.util.Random
 
 class SubnetControllerTest {
@@ -32,16 +34,17 @@ class SubnetControllerTest {
     @Test @DisplayName("서브넷 추가 테스트 - 추가 성공")
     fun addSubnetSuccess() {
         //테스트 데이터를 설정한다.
-        val uuid = Random().nextLong()
+        val issuerUuid = Random().nextLong()
         val subnet = getRandomSubnet()
         //로그인 계정을 조회하면, 서브넷 추가 권한이 있는 ADMINISTRATOR 를 반환한다.
-        `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccount(uuid, Role.ADMINISTRATOR))
+        `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccount(issuerUuid, Role.ADMINISTRATOR))
+        `when`(subnetManageService.add(issuerUuid, subnet.toSubnet())).thenReturn(SubnetInfo(subnet.toSubnet(), 0, issuerUuid).toMono())
         //서브넷 추가 요청을 처리한다.
         val response = subnetController.addSubnet(subnet)
         //성공적으로 서브넷 추가 완료 응답을 반환하였는지 검사한다.
         assert(response.block()!!.statusCode().is2xxSuccessful)
         //서브넷 추가 요청이 서비스단까지 정상적으로 도달하였는지 검사한다.
-        verify(subnetManageService, times(1)).add(uuid, subnet.toSubnet())
+        verify(subnetManageService, times(1)).add(issuerUuid, subnet.toSubnet())
     }
 
     @Test @DisplayName("서브넷 추가 테스트 - 서브넷 주소가 올바르지 않을 경우")
@@ -54,9 +57,9 @@ class SubnetControllerTest {
         //로그인 계정을 조회하면, 서브넷 추가 권한이 있는 ADMINISTRATOR 를 반환한다.
         `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccount(uuid, Role.ADMINISTRATOR))
         //형식에 맞지 않는 서브넷을 추가하려할 때, 예외가 발생하는지 검사한다.
-        assert(assertThrows<MalformedSubnetException> { subnetController.addSubnet(overflowSubnet) }.subnet == overflowSubnet)
-        assert(assertThrows<MalformedSubnetException> { subnetController.addSubnet(underflowSubnet) }.subnet == underflowSubnet)
-        assert(assertThrows<MalformedSubnetException> { subnetController.addSubnet(malformedSubnet) }.subnet == malformedSubnet)
+        assert(assertThrows<MalformedSubnetException> { subnetController.addSubnet(overflowSubnet).block() }.subnet == overflowSubnet)
+        assert(assertThrows<MalformedSubnetException> { subnetController.addSubnet(underflowSubnet).block() }.subnet == underflowSubnet)
+        assert(assertThrows<MalformedSubnetException> { subnetController.addSubnet(malformedSubnet).block() }.subnet == malformedSubnet)
     }
 
     @Test @DisplayName("서브넷 추가 테스트 - 권한이 없을 경우")

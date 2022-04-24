@@ -1,6 +1,6 @@
-package com.iplease.server.subnet.manage.entity
+package com.iplease.server.subnet.manage.data.entity
 
-import com.iplease.server.subnet.manage.type.Role
+import com.iplease.server.subnet.manage.data.type.Role
 
 //로그인 정보를 해석하여 얻은 계정정보
 data class LoginAccount (

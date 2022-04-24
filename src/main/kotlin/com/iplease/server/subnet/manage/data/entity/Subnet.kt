@@ -1,4 +1,4 @@
-package com.iplease.server.subnet.manage.entity
+package com.iplease.server.subnet.manage.data.entity
 
 data class Subnet (
     val first: Int,
