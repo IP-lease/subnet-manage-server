@@ -31,6 +31,8 @@ jobs:
         DOCKER_SERVER_IP: ${{ secrets.DOCKER_IP }}
         EUREKA_HOSTNAME: ${{ secrets.EUREKA_IP }}
         EUREKA_PORT: ${{ secrets.EUREKA_PORT }}
+        CONFIG_HOSTNAME: ${{ secrets.CONFIG_IP }}
+        CONFIG_PORT: ${{ secrets.CONFIG_PORT }}
         MQ_HOSTNAME: ${{ secrets.MQ_IP }}
         MQ_PORT: ${{ secrets.MQ_PORT }}
         MQ_USERNAME: ${{ secrets.MQ_USERNAME }}
