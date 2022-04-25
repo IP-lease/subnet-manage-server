@@ -1,8 +1,8 @@
 package com.iplease.server.subnet.manage.controller
 
-import com.iplease.server.subnet.manage.data.entity.LoginAccount
-import com.iplease.server.subnet.manage.data.entity.Subnet
-import com.iplease.server.subnet.manage.data.entity.SubnetInfo
+import com.iplease.server.subnet.manage.data.dto.LoginAccountDto
+import com.iplease.server.subnet.manage.data.dto.SubnetDto
+import com.iplease.server.subnet.manage.data.dto.SubnetInfoDto
 import com.iplease.server.subnet.manage.exception.MalformedSubnetException
 import com.iplease.server.subnet.manage.exception.PermissionDeniedException
 import com.iplease.server.subnet.manage.service.LoginAccountService
@@ -37,8 +37,8 @@ class SubnetControllerTest {
         val issuerUuid = Random().nextLong()
         val subnet = getRandomSubnet()
         //로그인 계정을 조회하면, 서브넷 추가 권한이 있는 ADMINISTRATOR 를 반환한다.
-        `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccount(issuerUuid, Role.ADMINISTRATOR))
-        `when`(subnetManageService.add(issuerUuid, subnet.toSubnet())).thenReturn(SubnetInfo(subnet.toSubnet(), 0, issuerUuid).toMono())
+        `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccountDto(issuerUuid, Role.ADMINISTRATOR))
+        `when`(subnetManageService.add(issuerUuid, subnet.toSubnet())).thenReturn(SubnetInfoDto(subnet.toSubnet(), 0, issuerUuid).toMono())
         //서브넷 추가 요청을 처리한다.
         val response = subnetController.addSubnet(subnet)
         //성공적으로 서브넷 추가 완료 응답을 반환하였는지 검사한다.
@@ -55,7 +55,7 @@ class SubnetControllerTest {
         val underflowSubnet = (Int.MIN_VALUE..-1).let { "${it.random()}.${it.random()}.${it.random()}" }
         val malformedSubnet = "helloworld"
         //로그인 계정을 조회하면, 서브넷 추가 권한이 있는 ADMINISTRATOR 를 반환한다.
-        `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccount(uuid, Role.ADMINISTRATOR))
+        `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccountDto(uuid, Role.ADMINISTRATOR))
         //형식에 맞지 않는 서브넷을 추가하려할 때, 예외가 발생하는지 검사한다.
         assert(assertThrows<MalformedSubnetException> { subnetController.addSubnet(overflowSubnet).block() }.subnet == overflowSubnet)
         assert(assertThrows<MalformedSubnetException> { subnetController.addSubnet(underflowSubnet).block() }.subnet == underflowSubnet)
@@ -68,7 +68,7 @@ class SubnetControllerTest {
         val uuid = Random().nextLong()
         val subnet = getRandomSubnet()
         //로그인 계정을 조회하면, 서브넷 추가 권한이 없는 USER 를 반환한다.
-        `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccount(uuid, Role.USER))
+        `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccountDto(uuid, Role.USER))
         //권한이 없을 경우, 예외가 발생하는지 검사한다.
         val exception = assertThrows<PermissionDeniedException> { subnetController.addSubnet(subnet) }
         assert(exception.uuid == uuid)
@@ -77,9 +77,9 @@ class SubnetControllerTest {
 
     private fun getRandomSubnet() = (0..255).let { "${it.random()}.${it.random()}.${it.random()}" }
 
-    private fun String.toSubnet(): Subnet =
+    private fun String.toSubnet(): SubnetDto =
         this.split(".")
             .map { it.toInt() }
             .map { if(it > 255) throw IllegalArgumentException("잘못된 서브넷 주소입니다.") else it }
-            .let { Subnet(it[0], it[1], it[2]) }
+            .let { SubnetDto(it[0], it[1], it[2]) }
 }

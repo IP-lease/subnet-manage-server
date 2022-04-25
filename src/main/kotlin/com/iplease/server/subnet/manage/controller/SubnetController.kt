@@ -1,7 +1,7 @@
 package com.iplease.server.subnet.manage.controller
 
-import com.iplease.server.subnet.manage.data.entity.LoginAccount
-import com.iplease.server.subnet.manage.data.entity.Subnet
+import com.iplease.server.subnet.manage.data.dto.LoginAccountDto
+import com.iplease.server.subnet.manage.data.dto.SubnetDto
 import com.iplease.server.subnet.manage.exception.MalformedSubnetException
 import com.iplease.server.subnet.manage.exception.PermissionDeniedException
 import com.iplease.server.subnet.manage.service.LoginAccountService
@@ -24,11 +24,11 @@ class SubnetController(
         val loginAccount = loginAccountService.getLoginAccount() //로그인된 계정의 정보를 가져온다.
         checkPermission(loginAccount, Permission.SUBNET_ADD) //권한이 있는지 확인한다.
         checkSubnet(subnet) //입력된 subnet이 올바른지 확인한다.
-        return subnetManageService.add(loginAccount.uuid, subnet.toSubnet()) //서브넷을 추가한다.
+        return subnetManageService.add(loginAccount.uuid, subnet.toSubnetDto()) //서브넷을 추가한다.
             .flatMap { ServerResponse.ok().bodyValue(it) }
     }
 
-    private fun checkPermission(account: LoginAccount, permission: Permission) {
+    private fun checkPermission(account: LoginAccountDto, permission: Permission) {
         if (!account.role.hasPermission(permission)) //만약 서브넷 추가 권한이 없다면
             throw PermissionDeniedException(account.uuid, permission) //예외를 던진다.
     }
@@ -44,8 +44,8 @@ class SubnetController(
         }
     }
 
-    private fun String.toSubnet() =
+    private fun String.toSubnetDto() =
         this.split(".")
             .map { it.toInt() }
-            .let { Subnet(it[0], it[1], it[2]) }
+            .let { SubnetDto(it[0], it[1], it[2]) }
 }
