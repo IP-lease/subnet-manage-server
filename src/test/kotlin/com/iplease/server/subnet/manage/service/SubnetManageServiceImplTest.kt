@@ -1,6 +1,8 @@
 package com.iplease.server.subnet.manage.service
 
 import com.iplease.server.subnet.manage.data.dto.SubnetDto
+import com.iplease.server.subnet.manage.data.dto.SubnetInfoDto
+import com.iplease.server.subnet.manage.data.mapper.SubnetInfoMapper
 import com.iplease.server.subnet.manage.data.table.SubnetInfoTable
 import com.iplease.server.subnet.manage.exception.DuplicateSubnetException
 import com.iplease.server.subnet.manage.repository.SubnetRepository
@@ -14,6 +16,7 @@ import java.util.*
 import kotlin.properties.Delegates
 
 class SubnetManageServiceImplTest {
+    private lateinit var subnetInfoMapper: SubnetInfoMapper
     private lateinit var subnetRepository: SubnetRepository
     private lateinit var subnetManageService: SubnetManageServiceImpl
     private var uuid by Delegates.notNull<Long>()
@@ -25,8 +28,9 @@ class SubnetManageServiceImplTest {
 
     @BeforeEach @DisplayName("테스트 데이터 초기화")
     fun setUp() {
+        subnetInfoMapper = mock(SubnetInfoMapper::class.java)
         subnetRepository = mock(SubnetRepository::class.java)
-        subnetManageService = SubnetManageServiceImpl(subnetRepository)
+        subnetManageService = SubnetManageServiceImpl(subnetRepository, subnetInfoMapper)
         uuid = Random().nextLong()
         issuerUuid = Random().nextLong()
         first = (0..255).random()
@@ -38,7 +42,9 @@ class SubnetManageServiceImplTest {
     @Test @DisplayName("서브넷 추가 테스트 - 추가 성공")
     fun addSubnetSuccess() {
         `when`(subnetRepository.save(table.copy(uuid = 0))).thenReturn(Mono.just(table))
-        `when`(subnetRepository.existsBySubnet(table.toSubnet())).thenReturn(Mono.just(false))
+        `when`(subnetRepository.existsBySubnet(table.toSubnetDto())).thenReturn(Mono.just(false))
+        `when`(subnetInfoMapper.toSubnetInfoDto(table)).thenReturn(table.toSubnetInfoDto())
+        //`when`(subnetInfoMapper.toSubnetInfoTable(table.toSubnetInfoDto())).thenReturn(table)
 
         val result = subnetManageService
             .add(issuerUuid, SubnetDto(first, second, third))
@@ -54,7 +60,7 @@ class SubnetManageServiceImplTest {
     @Test @DisplayName("서브넷 추가 테스트 - 이미 해당 서브넷이 존재할 경우")
     fun addSubnetFailureExist() {
         `when`(subnetRepository.save(table.copy(uuid = 0))).thenReturn(Mono.just(table))
-        `when`(subnetRepository.existsBySubnet(table.toSubnet())).thenReturn(Mono.just(true)) //이미 존재하는 서브넷에 대한 추가요청
+        `when`(subnetRepository.existsBySubnet(table.toSubnetDto())).thenReturn(Mono.just(true)) //이미 존재하는 서브넷에 대한 추가요청
 
         val exception = assertThrows<DuplicateSubnetException> {
             subnetManageService
@@ -65,4 +71,8 @@ class SubnetManageServiceImplTest {
         assert(exception.subnet == SubnetDto(first, second, third))
         assert(exception.issuerUuid == issuerUuid)
     }
+
+    private fun SubnetInfoTable.toSubnetDto() = SubnetDto(subnetFirst, subnetSecond, subnetThird)
+    private fun SubnetInfoTable.toSubnetInfoDto(): SubnetInfoDto = SubnetInfoDto(toSubnetDto(), uuid, issuerUuid)
 }
+

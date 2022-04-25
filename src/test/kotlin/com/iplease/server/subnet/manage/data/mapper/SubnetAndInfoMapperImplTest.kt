@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
-class SubnetMapperImplTest {
-    private val subnetMapperImpl = SubnetMapperImpl()
+class SubnetAndInfoMapperImplTest {
+    private val subnetAndInfoMapperImpl = SubnetAndInfoMapperImpl()
     private lateinit var subnetInfoTable: SubnetInfoTable
     private lateinit var subnetInfoDto: SubnetInfoDto
     private lateinit var subnetDto: SubnetDto
@@ -29,7 +29,7 @@ class SubnetMapperImplTest {
 
     @Test @DisplayName("SubnetDTO 로의 변환 테스트")
     fun toSubnetDto() {
-        subnetMapperImpl.toSubnetDto(subnetInfoTable).let {
+        subnetAndInfoMapperImpl.toSubnetDto(subnetInfoTable).let {
             assert(it.first == subnetInfoTable.subnetFirst)
             assert(it.second == subnetInfoTable.subnetSecond)
             assert(it.third == subnetInfoTable.subnetThird)
@@ -38,7 +38,7 @@ class SubnetMapperImplTest {
 
     @Test @DisplayName("SubnetInfoDTO 로의 변환 테스트")
     fun toSubnetInfoDto() {
-        subnetMapperImpl.toSubnetInfoDto(subnetInfoTable).let {
+        subnetAndInfoMapperImpl.toSubnetInfoDto(subnetInfoTable).let {
             assert(it.subnet.first == subnetInfoTable.subnetFirst)
             assert(it.subnet.second == subnetInfoTable.subnetSecond)
             assert(it.subnet.third == subnetInfoTable.subnetThird)
@@ -49,7 +49,7 @@ class SubnetMapperImplTest {
 
     @Test @DisplayName("SubnetInfoTable 로의 변환 테스트")
     fun toSubnetInfoTable() {
-        subnetMapperImpl.toSubnetInfoTable(subnetInfoDto).let {
+        subnetAndInfoMapperImpl.toSubnetInfoTable(subnetInfoDto).let {
             assert(it.subnetFirst == subnetInfoDto.subnet.first)
             assert(it.subnetSecond == subnetInfoDto.subnet.second)
             assert(it.subnetThird == subnetInfoDto.subnet.third)
