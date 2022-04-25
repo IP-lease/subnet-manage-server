@@ -14,14 +14,14 @@ import java.util.*
 import kotlin.properties.Delegates
 
 class SubnetManageServiceImplTest {
-    lateinit var subnetRepository: SubnetRepository
-    lateinit var subnetManageService: SubnetManageServiceImpl
+    private lateinit var subnetRepository: SubnetRepository
+    private lateinit var subnetManageService: SubnetManageServiceImpl
     private var uuid by Delegates.notNull<Long>()
     private var issuerUuid by Delegates.notNull<Long>()
     private var first by Delegates.notNull<Int>()
     private var second by Delegates.notNull<Int>()
     private var third by Delegates.notNull<Int>()
-    lateinit var table: SubnetInfoTable
+    private lateinit var table: SubnetInfoTable
 
     @BeforeEach @DisplayName("테스트 데이터 초기화")
     fun setUp() {
