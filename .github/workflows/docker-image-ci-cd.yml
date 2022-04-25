@@ -2,9 +2,9 @@ name: Docker & EC2 CI CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [ develop, master ]
   pull_request:
-    branches: [ master ]
+    branches: [ develop, master ]
 env:
   DOCKER_IMAGE_NAME: devraul/iplease-subnet-manage-server
   DOCKER_CONTAINER_NAME: subnet-manage-server
