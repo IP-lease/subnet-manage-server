@@ -19,4 +19,7 @@ class SubnetManageServiceImpl(
                 if(it)  Mono.error(DuplicateSubnetException(issuerUuid, subnet))
                 else subnetRepository.save(SubnetInfoTable(0, issuerUuid, subnet.first, subnet.second, subnet.third))
             }.map (subnetInfoMapper::toSubnetInfoDto)
+
+    private fun SubnetRepository.existsBySubnet(subnet: SubnetDto) =
+        existsBySubnetFirstAndSubnetSecondAndSubnetThird(subnet.first, subnet.second, subnet.third)
 }

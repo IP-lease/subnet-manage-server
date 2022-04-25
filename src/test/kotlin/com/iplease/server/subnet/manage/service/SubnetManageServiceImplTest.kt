@@ -74,5 +74,7 @@ class SubnetManageServiceImplTest {
 
     private fun SubnetInfoTable.toSubnetDto() = SubnetDto(subnetFirst, subnetSecond, subnetThird)
     private fun SubnetInfoTable.toSubnetInfoDto(): SubnetInfoDto = SubnetInfoDto(toSubnetDto(), uuid, issuerUuid)
+    private fun SubnetRepository.existsBySubnet(subnet: SubnetDto) =
+        existsBySubnetFirstAndSubnetSecondAndSubnetThird(subnet.first, subnet.second, subnet.third)
 }
 
