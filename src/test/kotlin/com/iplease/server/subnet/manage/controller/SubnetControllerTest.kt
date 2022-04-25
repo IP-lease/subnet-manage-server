@@ -42,7 +42,7 @@ class SubnetControllerTest {
         //서브넷 추가 요청을 처리한다.
         val response = subnetController.addSubnet(subnet)
         //성공적으로 서브넷 추가 완료 응답을 반환하였는지 검사한다.
-        assert(response.block()!!.statusCode().is2xxSuccessful)
+        assert(response.block()!!.statusCode.is2xxSuccessful)
         //서브넷 추가 요청이 서비스단까지 정상적으로 도달하였는지 검사한다.
         verify(subnetManageService, times(1)).add(issuerUuid, subnet.toSubnet())
     }
@@ -70,7 +70,7 @@ class SubnetControllerTest {
         //로그인 계정을 조회하면, 서브넷 추가 권한이 없는 USER 를 반환한다.
         `when`(loginAccountService.getLoginAccount()).thenReturn(LoginAccountDto(uuid, Role.USER))
         //권한이 없을 경우, 예외가 발생하는지 검사한다.
-        val exception = assertThrows<PermissionDeniedException> { subnetController.addSubnet(subnet) }
+        val exception = assertThrows<PermissionDeniedException> { subnetController.addSubnet(subnet).block() }
         assert(exception.uuid == uuid)
         assert(exception.permission == Permission.SUBNET_ADD)
     }
