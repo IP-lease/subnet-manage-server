@@ -5,6 +5,7 @@ import com.iplease.server.subnet.manage.data.type.ErrorCode
 import com.iplease.server.subnet.manage.exception.DuplicateSubnetException
 import com.iplease.server.subnet.manage.exception.MalformedSubnetException
 import com.iplease.server.subnet.manage.exception.PermissionDeniedException
+import com.iplease.server.subnet.manage.exception.UnknownSubnetException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -21,6 +22,12 @@ class SubnetControllerAdvice {
     @ExceptionHandler(MalformedSubnetException::class)
     fun handle(exception: MalformedSubnetException) =
         ErrorResponse(ErrorCode.MALFORMED_SUBNET, "서브넷 형식이 올바르지 않습니다", "서브넷 은 0~255까지의 정수 3개로 구성되어있습니다. (ex, 192.168.0)")
+            .badRequest()
+            .toMono()
+
+    @ExceptionHandler(UnknownSubnetException::class)
+    fun handle(exception: UnknownSubnetException) =
+        ErrorResponse(ErrorCode.UNKNOWN_SUBNET, "서브넷을 찾을 수 없습니다.", "존재하지 않는 서브넷입니다.")
             .badRequest()
             .toMono()
 

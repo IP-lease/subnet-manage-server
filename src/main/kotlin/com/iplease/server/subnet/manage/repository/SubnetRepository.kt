@@ -5,5 +5,6 @@ import org.springframework.data.r2dbc.repository.R2dbcRepository
 import reactor.core.publisher.Mono
 
 interface SubnetRepository: R2dbcRepository<SubnetInfoTable, Long> {
+    fun deleteBySubnetFirstAndSubnetSecondAndSubnetThird(subnetFirst: Int, subnetSecond: Int, subnetThird: Int): Mono<Unit>
     fun existsBySubnetFirstAndSubnetSecondAndSubnetThird(subnetFirst: Int, subnetSecond: Int, subnetThird: Int): Mono<Boolean>
 }

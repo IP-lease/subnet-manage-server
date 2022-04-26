@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono
 
 interface SubnetManageService {
     fun add(issuerUuid: Long, subnet: SubnetDto): Mono<SubnetInfoDto>
+    fun remove(subnet: SubnetDto): Mono<Unit>
 }
