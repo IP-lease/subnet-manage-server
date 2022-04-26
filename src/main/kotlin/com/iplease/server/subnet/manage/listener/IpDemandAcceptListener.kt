@@ -57,7 +57,3 @@ class IpDemandAcceptListener(
             .let(ipValidService::checkIp)
     }
 }
-
-fun main() {
-    print(ObjectMapper().writeValueAsString(IpDemandAcceptDto(1, 2134, 323, "127.0.0.32")))
-}
