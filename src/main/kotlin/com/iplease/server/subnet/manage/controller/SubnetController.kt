@@ -28,8 +28,8 @@ class SubnetController(
     ): Mono<ResponseEntity<Unit>> {
         checkPermission(role, Permission.SUBNET_REMOVE) //권한이 있는지 확인한다.
         checkSubnet(subnet) //입력된 subnet이 올바른지 확인한다.
-        subnetManageService.remove(uuid, subnet.toSubnetDto()) //서브넷을 제거한다.
-        return Mono.just(ResponseEntity.ok().build())
+        return subnetManageService.remove(subnet.toSubnetDto()) //서브넷을 제거한다.
+            .map { ResponseEntity.ok().build() } //성공적으로 제거되었다면 성공적인 응답을 반환한다.
     }
 
     @PostMapping("/{subnet}")
@@ -40,7 +40,7 @@ class SubnetController(
         checkPermission(role, Permission.SUBNET_ADD) //권한이 있는지 확인한다.
         checkSubnet(subnet) //입력된 subnet이 올바른지 확인한다.
         return subnetManageService.add(uuid, subnet.toSubnetDto()) //서브넷을 추가한다.
-            .flatMap { Mono.just(ResponseEntity.ok(it)) }
+            .map { ResponseEntity.ok(it) }
     }
 
     private fun checkPermission(role: Role, permission: Permission) {

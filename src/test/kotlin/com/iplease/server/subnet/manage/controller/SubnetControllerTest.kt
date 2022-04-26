@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
+import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import java.util.Random
 
@@ -32,10 +33,11 @@ class SubnetControllerTest {
         //테스트 데이터를 설정한다.
         val issuerUuid = Random().nextLong()
         val subnet = getRandomSubnet()
+        whenever(subnetManageService.remove(any())).thenReturn(Mono.empty())
 
         subnetController.removeSubnet(subnet, issuerUuid, Role.ADMINISTRATOR).block()
         //서브넷 삭제 요청이 서비스단까지 정상적으로 도달하였는지 검사한다.
-        verify(subnetManageService, times(1)).remove(issuerUuid, subnet.toSubnet())
+        verify(subnetManageService, times(1)).remove(subnet.toSubnet())
     }
 
     @Test @DisplayName("서브넷 추가 테스트 - 추가 성공")
@@ -69,7 +71,7 @@ class SubnetControllerTest {
         assert(assertThrows<MalformedSubnetException> { subnetController.removeSubnet(underflowSubnet, issuerUuid, Role.ADMINISTRATOR).block() }.subnet == underflowSubnet)
         assert(assertThrows<MalformedSubnetException> { subnetController.removeSubnet(malformedSubnet, issuerUuid, Role.ADMINISTRATOR).block() }.subnet == malformedSubnet)
 
-        verify(subnetManageService, times(0)).remove(any(), any())
+        verify(subnetManageService, times(0)).remove(any())
     }
 
     @Test @DisplayName("서브넷 추가 테스트 - 서브넷 주소가 올바르지 않을 경우")
@@ -97,7 +99,7 @@ class SubnetControllerTest {
         assert(exception.role == Role.USER)
         assert(exception.permission == Permission.SUBNET_REMOVE)
 
-        verify(subnetManageService, times(0)).remove(any(), any())
+        verify(subnetManageService, times(0)).remove(any())
     }
 
     @Test @DisplayName("서브넷 추가 테스트 - 권한이 없을 경우")
