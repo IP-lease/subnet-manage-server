@@ -39,6 +39,7 @@ dependencies {
     implementation ("org.springdoc:springdoc-openapi-webflux-ui:1.6.7")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.mapstruct:mapstruct:1.4.1.Final")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0")
     runtimeOnly("mysql:mysql-connector-java")
     runtimeOnly("dev.miku:r2dbc-mysql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
