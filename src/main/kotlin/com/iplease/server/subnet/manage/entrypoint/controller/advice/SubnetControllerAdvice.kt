@@ -1,7 +1,8 @@
-package com.iplease.server.subnet.manage.advice
+package com.iplease.server.subnet.manage.entrypoint.controller.advice
 
 import com.iplease.server.subnet.manage.data.response.ErrorResponse
 import com.iplease.server.subnet.manage.data.type.ErrorCode
+import com.iplease.server.subnet.manage.entrypoint.controller.SubnetController
 import com.iplease.server.subnet.manage.exception.DuplicateSubnetException
 import com.iplease.server.subnet.manage.exception.MalformedSubnetException
 import com.iplease.server.subnet.manage.exception.PermissionDeniedException
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import reactor.kotlin.core.publisher.toMono
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = [SubnetController::class])
 class SubnetControllerAdvice {
     @ExceptionHandler(DuplicateSubnetException::class)
     fun handle(exception: DuplicateSubnetException) =

@@ -1,4 +1,4 @@
-package com.iplease.server.subnet.manage.listener
+package com.iplease.server.subnet.manage.entrypoint.listener
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule

@@ -7,6 +7,7 @@ import com.iplease.server.subnet.manage.exception.PermissionDeniedException
 import com.iplease.server.subnet.manage.service.SubnetManageService
 import com.iplease.server.subnet.manage.data.type.Permission
 import com.iplease.server.subnet.manage.data.type.Role
+import com.iplease.server.subnet.manage.entrypoint.controller.SubnetController
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
