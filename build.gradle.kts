@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.iplease"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0-RELEASE"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -37,10 +37,17 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-loadbalancer")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation ("org.springdoc:springdoc-openapi-webflux-ui:1.6.7")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.mapstruct:mapstruct:1.4.1.Final")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0")
+    runtimeOnly("mysql:mysql-connector-java")
+    runtimeOnly("dev.miku:r2dbc-mysql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.4.1.Final")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.amqp:spring-rabbit-test")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
 }
 
 dependencyManagement {
