@@ -30,13 +30,13 @@ class IpDemandAcceptListener(
             LOGGER.info("- queue : $QUEUE_NAME")
             LOGGER.info("- event : $EVENT_NAME")
             try {
-                LOGGER.info("handling event...")
+                LOGGER.trace("handling event...")
                 handle(payload)
-                LOGGER.info("handling complete!")
+                LOGGER.trace("handling complete!")
             } catch (e: Throwable) {
-                LOGGER.info("error occurred during handle event!")
-                LOGGER.info("- error : ${e.javaClass.simpleName}")
-                LOGGER.info("- cause : ${e.message}")
+                LOGGER.warn("error occurred during handle event!")
+                LOGGER.warn("- error : ${e.javaClass.simpleName}")
+                LOGGER.warn("- cause : ${e.message}")
                 onError(payload)
             }
         }
