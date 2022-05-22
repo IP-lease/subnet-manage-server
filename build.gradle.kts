@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.iplease"
-version = "1.0.0-RELEASE"
+version = "1.0.1-RELEASE"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -24,6 +24,7 @@ repositories {
 extra["springCloudVersion"] = "2021.0.1"
 
 dependencies {
+    implementation("io.github.key-del-jeeinho:messa-lib:1.0.1-RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation ("org.springframework.cloud:spring-cloud-starter-bus-amqp")
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")

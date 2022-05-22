@@ -1,4 +1,4 @@
-package com.iplease.server.subnet.manage.data.table
+package com.iplease.server.subnet.manage.data.domain
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table

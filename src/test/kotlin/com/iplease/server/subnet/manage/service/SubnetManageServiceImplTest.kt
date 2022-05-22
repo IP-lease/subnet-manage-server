@@ -3,7 +3,7 @@ package com.iplease.server.subnet.manage.service
 import com.iplease.server.subnet.manage.data.dto.SubnetDto
 import com.iplease.server.subnet.manage.data.dto.SubnetInfoDto
 import com.iplease.server.subnet.manage.data.mapper.SubnetInfoMapper
-import com.iplease.server.subnet.manage.data.table.SubnetInfoTable
+import com.iplease.server.subnet.manage.data.domain.SubnetInfoTable
 import com.iplease.server.subnet.manage.exception.DuplicateSubnetException
 import com.iplease.server.subnet.manage.exception.UnknownSubnetException
 import com.iplease.server.subnet.manage.repository.SubnetRepository

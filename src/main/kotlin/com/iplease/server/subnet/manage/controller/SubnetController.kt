@@ -1,4 +1,4 @@
-package com.iplease.server.subnet.manage.entrypoint.controller
+package com.iplease.server.subnet.manage.controller
 
 import com.iplease.server.subnet.manage.data.dto.SubnetDto
 import com.iplease.server.subnet.manage.data.dto.SubnetInfoDto

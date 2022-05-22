@@ -2,7 +2,7 @@ package com.iplease.server.subnet.manage.data.mapper
 
 import com.iplease.server.subnet.manage.data.dto.SubnetDto
 import com.iplease.server.subnet.manage.data.dto.SubnetInfoDto
-import com.iplease.server.subnet.manage.data.table.SubnetInfoTable
+import com.iplease.server.subnet.manage.data.domain.SubnetInfoTable
 import org.springframework.stereotype.Component
 
 @Component //TODO ModelMapper 나 Map Struct 도입 생각해보기
