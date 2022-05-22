@@ -1,8 +1,8 @@
-package com.iplease.server.subnet.manage.entrypoint.controller.advice
+package com.iplease.server.subnet.manage.controller.advice
 
 import com.iplease.server.subnet.manage.data.response.ErrorResponse
 import com.iplease.server.subnet.manage.data.type.ErrorCode
-import com.iplease.server.subnet.manage.entrypoint.controller.SubnetController
+import com.iplease.server.subnet.manage.controller.SubnetController
 import com.iplease.server.subnet.manage.exception.DuplicateSubnetException
 import com.iplease.server.subnet.manage.exception.MalformedSubnetException
 import com.iplease.server.subnet.manage.exception.PermissionDeniedException
