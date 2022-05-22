@@ -1,7 +1,6 @@
 package com.iplease.server.subnet.manage.entrypoint.listener
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.iplease.lib.messa.error.data.global.WrongPayloadError
 import com.iplease.lib.messa.error.data.ip.demand.status.IpDemandStatusAcceptError
@@ -27,44 +26,42 @@ class IpDemandAcceptListener(
 ) {
     companion object { const val QUEUE_NAME = "server.subnet.manage" }
     val LOGGER = LoggerFactory.getLogger(this::class.java)
+    val objectMapper = ObjectMapper().registerKotlinModule()
 
     @RabbitListener(queues = [QUEUE_NAME])
     fun listen(@Payload payload: String, message: Message) {
-        if(message.messageProperties.receivedRoutingKey.equals(IpDemandEventTypeV1.IP_DEMAND_STATUS_ACCEPT.routingKey)) {
-            LOGGER.info("event listened!")
-            LOGGER.info("- queue : $QUEUE_NAME")
-            LOGGER.info("- event : ${IpDemandEventTypeV1.IP_DEMAND_STATUS_ACCEPT.routingKey}")
-            try {
-                LOGGER.trace("handling event...")
-                handle(payload)
-                LOGGER.trace("handling complete!")
-            } catch (e: Throwable) {
-                LOGGER.warn("error occurred during handle event!")
-                LOGGER.warn("- error : ${e.javaClass.simpleName}")
-                LOGGER.warn("- cause : ${e.message}")
-                onError(payload)
-            }
-        }
+        if(!message.messageProperties.receivedRoutingKey.equals(IpDemandEventTypeV1.IP_DEMAND_STATUS_ACCEPT.routingKey)) return
+        LOGGER.info("event listened!")
+        LOGGER.info("- queue : $QUEUE_NAME")
+        LOGGER.info("- event : ${IpDemandEventTypeV1.IP_DEMAND_STATUS_ACCEPT.routingKey}")
+
+        process(payload).subscribe()
     }
 
-    private fun handle(payload: String) {
-        ObjectMapper().registerKotlinModule()
-            .readValue(payload, IpDemandEventTypeV1.IP_DEMAND_STATUS_ACCEPT.eventPayloadType.java)
-            .let { it as IpDemandStatusAcceptEvent }
-            .demandedIp
-            .let(ipValidService::checkIp)
-    }
+    private fun process(payload: String) =
+        payload.toMono()
+            .map { objectMapper.readValue(payload, IpDemandEventTypeV1.IP_DEMAND_STATUS_ACCEPT.eventPayloadType.java) as IpDemandStatusAcceptEvent }
+            .map { ipValidService.checkIp(it.demandedIp) }
+            .doFirst{ LOGGER.trace("handling event...")}
+            .doOnSuccess{ LOGGER.trace("handling complete!") }
+            .doOnError{
+                LOGGER.warn("error occurred during handle event!")
+                LOGGER.warn("- error : ${it.javaClass.simpleName}")
+                LOGGER.warn("- cause : ${it.message}")
+                onError(payload)
+            }.onErrorResume { Mono.empty() }
 
     private fun onError(payload: String) {
         payload.toMono()
             .readEvent()
             .publishError()
+            .doOnError{ sendUnknownError() }
+            .onErrorResume { Mono.empty() }
             .subscribe()
     }
 
     private fun Mono<String>.readEvent(): Mono<IpDemandStatusAcceptEvent> {
-        val mapper = ObjectMapper().registerModule(KotlinModule())
-        return map { mapper.readValue(it, IpDemandEventTypeV1.IP_DEMAND_STATUS_ACCEPT.eventPayloadType.java) }
+        return map { objectMapper.readValue(it, IpDemandEventTypeV1.IP_DEMAND_STATUS_ACCEPT.eventPayloadType.java) }
             .map { it as IpDemandStatusAcceptEvent }
             .doOnError { sendWrongPayloadError() }
             .onErrorResume { Mono.empty() }
@@ -72,20 +69,14 @@ class IpDemandAcceptListener(
 
     private fun Mono<IpDemandStatusAcceptEvent>.publishError(): Mono<Unit> =
         map { IpDemandStatusAcceptError(it.demandUuid, it.issuerUuid, it.managerUuid, it.demandedIp) }
-            .map { ObjectMapper().registerKotlinModule().writeValueAsString(it) }
+            .map { objectMapper.writeValueAsString(it) }
             .map{ rabbitTemplate.convertAndSend(IpDemandErrorTypeV1.IP_DEMAND_STATUS_ACCEPT.routingKey, it) }
-            .doOnError{ sendUnknownError() }
-            .onErrorResume { Mono.empty() }
 
-    private fun sendWrongPayloadError() {
-        WrongPayloadError("IpDemandAcceptEvent 구독중, 잘못된 Payload로 인한 오류가 발생하였습니다!")
-            .let { ObjectMapper().writeValueAsString(it) }
+    private fun sendWrongPayloadError() = WrongPayloadError("IpDemandAcceptEvent 구독중, 잘못된 Payload로 인한 오류가 발생하였습니다!")
+            .let { objectMapper.writeValueAsString(it) }
             .let { rabbitTemplate.convertAndSend(GlobalErrorTypeV1.WRONG_PAYLOAD.routingKey, it) }
-    }
-
-    private fun sendUnknownError() {
-        UnknownError("IpDemandAcceptEvent 구독중, 알 수 없는 오류가 발생하였습니다!")
-            .let { ObjectMapper().writeValueAsString(it) }
+    private fun sendUnknownError() = UnknownError("IpDemandAcceptEvent 구독중, 알 수 없는 오류가 발생하였습니다!")
+            .let { objectMapper.writeValueAsString(it) }
             .let { rabbitTemplate.convertAndSend(GlobalErrorTypeV1.UNKNOWN_ERROR.routingKey, it) }
-    }
+
 }
