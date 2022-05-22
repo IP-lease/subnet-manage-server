@@ -1,6 +1,6 @@
 package com.iplease.server.subnet.manage.repository
 
-import com.iplease.server.subnet.manage.data.table.SubnetInfoTable
+import com.iplease.server.subnet.manage.data.domain.SubnetInfoTable
 import org.springframework.data.r2dbc.repository.R2dbcRepository
 import reactor.core.publisher.Mono
 
