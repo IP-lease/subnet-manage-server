@@ -2,7 +2,7 @@ package com.iplease.server.subnet.manage.data.mapper
 
 import com.iplease.server.subnet.manage.data.dto.SubnetDto
 import com.iplease.server.subnet.manage.data.dto.SubnetInfoDto
-import com.iplease.server.subnet.manage.data.table.SubnetInfoTable
+import com.iplease.server.subnet.manage.data.domain.SubnetInfoTable
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
